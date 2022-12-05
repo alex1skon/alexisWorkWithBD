@@ -30,8 +30,8 @@ public class MainWork {
     static JScrollPane scrollPane;
 
     public static void main(String[] args) {
-        //mainFrame = new JFrame("mainFrame");
-        System.out.println("Hello World!");
+        mainFrame = new JFrame("mainFrame");
+        // System.out.println("Hello World!");
     }
 
     protected static JTable toTableView(ResultSet rs) {
