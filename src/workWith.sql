@@ -1,23 +1,41 @@
 -- Active: 1669031617602@@127.0.0.1@3306@course
-INSERT INTO guest (fullname,birth,hostel,course,classGroup,trainer_id)
+-- Работа по заполнению
+INSERT INTO trainingprogram
+  (trainingProgramName,started,ended,guest_id,trainer_id)
 VALUES
-  ("Victoria Reeves","2022-06-21 07","Eget Varius Associates",2,"8725",83),
-  ("Quemby Fowler","2022-05-04 22","Id Risus Corporation",3,"6302",94),
-  ("Graiden Dorsey","2023-06-16 04","Feugiat Tellus Incorporated",1,"0533",99),
-  ("Yvette Holder","2023-01-17 09","Nunc PC",3,"1415",89),
-  ("Isabella Hopkins","2021-12-07 13","Sed Dui Fusce LLC",4,"5764",87),
-  ("Alika Lott","2023-05-01 10","Neque Consulting",3,"5725",100),
-  ("Zachary Fulton","2023-11-18 09","Aliquam Auctor Limited",2,"5099",71),
-  ("Willa Phelps","2023-07-10 22","Nec Industries",3,"4152",80),
-  ("Hop Buckner","2022-09-12 14","Sed Dictum LLP",2,"2548",78),
-  ("Kasimir Spence","2021-12-28 02","Dapibus Gravida Corp.",2,"6937",85),
-  ("Camilla Parrish","2023-01-30 19","Duis Volutpat Nunc Corporation",3,"4875",77),
-  ("Rowan Banks","2022-04-30 00","Euismod Ac Industries",2,"3214",65),
-  ("Brooke Frank","2022-06-27 01","Vestibulum Ante Incorporated",1,"2519",67),
-  ("Wayne Miranda","2022-04-15 03","Magna Tellus Limited",2,"9331",78),
-  ("Autumn Herrera","2023-06-27 13","Vestibulum Inc.",3,"2540",65),
-  ("Lionel Joyce","2022-08-10 10","Vitae Erat Consulting",1,"6326",63),
-  ("Kane Sexton","2022-07-13 00","Tellus Non Corporation",2,"2180",65),
-  ("Jessamine Berry","2023-10-30 13","Sagittis Associates",1,"2066",77),
-  ("Sawyer Wynn","2022-11-15 18","Ornare Placerat Orci Limited",2,"1212",88),
-  ("Byron Diaz","2023-05-22 02","Quam Elementum At Ltd",1,"4751",85);
+  ("lacus", "2024-01-30 19", "2025-09-01 03", 26, 74),
+  ("justo", "2024-07-18 12", "2025-06-01 07", 37, 74),
+  ("eu", "2024-07-16 20", "2025-08-01 02", 9, 66),
+  ("metus", "2024-08-17 04", "2025-05-23 08", 22, 76),
+  ("vitae", "2024-02-22 03", "2025-02-02 11", 20, 77),
+  ("pede", "2024-07-27 07", "2025-07-18 12", 13, 75),
+  ("Donec", "2024-06-01 10", "2025-03-20 09", 37, 75),
+  ("mauris,", "2024-02-06 19", "2025-10-06 12", 4, 82),
+  ("sed", "2024-10-13 10", "2025-02-25 09", 19, 91),
+  ("Donec", "2024-07-26 19", "2025-05-21 13", 32, 78),
+  ("Nullam", "2024-09-12 18", "2025-02-06 02", 9, 60),
+  ("rhoncus", "2024-10-14 21", "2025-06-07 10", 25, 83),
+  ("convallis", "2024-09-15 16", "2025-01-07 06", 21, 88),
+  ("sed", "2024-12-08 21", "2025-09-25 21", 23, 68),
+  ("blandit", "2024-04-11 10", "2025-08-27 14", 28, 70),
+  ("aliquet,", "2024-11-11 18", "2025-04-07 10", 4, 78),
+  ("Donec", "2024-08-29 06", "2025-07-22 09", 4, 86),
+  ("scelerisque", "2024-04-12 02", "2025-12-08 00", 27, 94),
+  ("non", "2024-06-24 23", "2025-07-21 12", 1, 82),
+  ("varius", "2024-02-22 16", "2025-06-22 08", 30, 73);
+
+-- Образец работы с соединениями
+  select
+    Tr.trainingProgramName,
+    Tr.started,
+    Tr.ended,
+    G.fullName as Гость,
+    T.fullname as Тренер
+  from
+    trainingprogram Tr
+      inner join trainer T ON TR.trainer_id = T.trainer_id
+      inner join guest G on Tr.guest_id = G.guest_id;
+
+-- Показ столбцов и их тип
+-- describe visitingSchedule;
+
