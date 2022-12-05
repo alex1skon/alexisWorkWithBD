@@ -1,5 +1,6 @@
 import java.sql.*; // программа для ведения учета
 import javax.swing.*;
+import java.awt.*;
 // import java.swing.*;
 
 public class MainWork {
@@ -35,6 +36,11 @@ public class MainWork {
     }
 
     protected static JTable toTableView(ResultSet rs) {
+        return null;
+    }
+
+    private Component setMenu() {
+        
         return null;
     }
 }
