@@ -42,9 +42,9 @@ public class MainWork {
         // System.out.println("Hello World!");
     }
 
-    protected static JTable toTableView(ResultSet rSet) {
+    protected static JTable guestToTableView(ResultSet rSet) {
         int rowCount = 0;
-        
+
         String[][] data = null;
         try {
             rSet.last();
@@ -52,31 +52,61 @@ public class MainWork {
             data = new String[rowCount][6];
 
             System.out.println("Количество строк: " + rowCount);
-            
+
             rSet.beforeFirst();
+
             while (rSet.next()) {
                 for (int i = 2; i < 7; i++) {
                     // System.out.println(rSet.getRow());
                     data[rSet.getRow() - 1][i - 2] = rSet.getString(i);
-    
-                    System.out.println(data[rSet.getRow() - 1][i  - 2] + " ");
+
+                    System.out.println(data[rSet.getRow() - 1][i - 2] + " ");
                 }
-    
+
                 ResultSet tempRS = fromDB("select * from trainer where trainer_id = " + rSet.getInt("trainer_id"));
                 tempRS.next();
 
                 String trainer = tempRS.getString("fullname");
-                
+
                 data[rSet.getRow() - 1][5] = trainer;
                 System.out.println(data[rSet.getRow() - 1][5] + " ");
             }
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        String[] columnNames = {"ФИО", "Дата Рождения", "Общежитие", "Курс", "Группа", "ФИО Тренера"};
+        String[] columnNames = { "ФИО", "Дата Рождения", "Общежитие", "Курс", "Группа", "ФИО Тренера" };
 
+        JTable tempTable = new JTable(data, columnNames);
+
+        return tempTable;
+    }
+
+    protected static JTable trainerToTableView(ResultSet rSet) {
+        int rowCount = 0;
+        String[][] data = null;
+        try {
+            rSet.last();
+            rowCount = rSet.getRow();
+            data = new String[rowCount][4];
+            System.out.println("Количество строк: " + rowCount);
+
+            rSet.beforeFirst();
+            while (rSet.next()) {
+                for (int i = 2; i < 6; i++) {
+                    data[rSet.getRow() - 1][i - 2] = rSet.getString(i);
+
+                    System.out.println(data[rSet.getRow() - 1][i - 2]);
+                }
+                System.out.println();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String[] columnNames = {"ФИО", "Дата рождения", "Адрес проживания", "Тел. номер"};
         JTable tempTable = new JTable(data, columnNames);
 
         return tempTable;
@@ -84,20 +114,44 @@ public class MainWork {
 
     private static Component setMenu() {
         Box mainMenu = new Box(BoxLayout.X_AXIS);
-        JButton guestButton = new JButton("Гости");
-        guestButton.addActionListener(e -> {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu tablesMenu = new JMenu("Таблицы");
+        JMenu viewMenu = new JMenu("Показать");
+        JMenuItem guestMenuItem = new JMenuItem("Гости");
+        // JButton guestButton = new JButton("Гости");
+        guestMenuItem.addActionListener(e -> {
+            mainFrame.remove(scrollPane);
             ResultSet rs = null;
             System.out.println("Guests ! :");
             rs = fromDB("select * from guest");
-            JTable guestsTable = toTableView(rs);
+            JTable guestsTable = guestToTableView(rs);
 
             scrollPane = new JScrollPane(guestsTable);
             guestsTable.setFillsViewportHeight(true);
             mainFrame.add(scrollPane, BorderLayout.CENTER);
             mainFrame.pack();
         });
+        
+        JMenuItem trainerMenuItem = new JMenuItem("Тренеры");
+        trainerMenuItem.addActionListener(e -> {
+            mainFrame.remove(scrollPane);
+            ResultSet rs = null;
+            System.out.println("Trainer ! :");
+            rs = fromDB("select * from trainer");
+            JTable trainerTable = trainerToTableView(rs);
 
-        mainMenu.add(guestButton);
+            scrollPane = new JScrollPane(trainerTable);
+            trainerTable.setFillsViewportHeight(true);
+            mainFrame.add(scrollPane, BorderLayout.CENTER);
+            mainFrame.pack();
+        });
+
+        // Компоновка элементов в меню и подменю интерфейса
+        tablesMenu.add(viewMenu);
+        viewMenu.add(guestMenuItem);
+        viewMenu.add(trainerMenuItem);
+        menuBar.add(tablesMenu);
+        mainMenu.add(menuBar);
 
         return mainMenu;
     }
