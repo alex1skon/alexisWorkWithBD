@@ -1,4 +1,4 @@
--- Active: 1669031617602@@127.0.0.1@3306@course
+-- Active: 1670870168466@@127.0.0.1@1433@Учебная
 -- Работа по заполнению
 INSERT INTO trainingprogram
   (trainingProgramName,started,ended,guest_id,trainer_id)
@@ -25,21 +25,22 @@ VALUES
   ("varius", "2024-02-22 16", "2025-06-22 08", 30, 73);
 
 -- Образец работы с соединениями
-  select
-    Tr.trainingProgramName,
-    Tr.started,
-    Tr.ended,
-    G.fullName as Гость,
-    T.fullname as Тренер
-  from
-    trainingprogram Tr
-      inner join trainer T ON TR.trainer_id = T.trainer_id
-      inner join guest G on Tr.guest_id = G.guest_id;
+select
+  Tr.trainingProgramName,
+  Tr.started,
+  Tr.ended,
+  G.fullName as Гость,
+  T.fullname as Тренер
+from
+  trainingprogram Tr
+  inner join trainer T ON TR.trainer_id = T.trainer_id
+  inner join guest G on Tr.guest_id = G.guest_id;
 
 -- Показ столбцов и их тип
 -- describe timetable;
 
-insert into timetable (datetime, dayOfWeek, guest_id)
+insert into timetable
+  (datetime, dayOfWeek, guest_id)
 values
   ("2024-12-16", "Понедельник", 1),
   ("2024-12-16", "Понедельник", 2),
@@ -63,11 +64,22 @@ values
   ("2024-12-22", "Воскресенье", 20),
   ("2024-12-22", "Воскресенье", 21);
 
-  -- Показ количества гостей в каждый день недели
+-- Показ количества гостей в каждый день недели
 SELECT
   datetime,
   dayOfWeek,
   count(guest_id) as Количество_гостей
 FROM timetable
 
-group by dayOfWeek
+group by dayOfWeek;
+
+alter table exercises
+  rename COLUMN exercises_id to exercise_id;
+
+select cast(T.datetime as date), T.dayofweek, G.fullname
+from timetable T inner join guest G on T.guest_id = G.guest_id;
+
+create trigger l1 on Ученики
+for update as BEGIN
+  print 'Таблица изменена'
+End
