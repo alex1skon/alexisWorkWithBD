@@ -1,4 +1,4 @@
--- Active: 1670870168466@@127.0.0.1@1433@Учебная
+-- Active: 1669031617602@@127.0.0.1@3306@course
 -- Работа по заполнению
 INSERT INTO trainingprogram
   (trainingProgramName,started,ended,guest_id,trainer_id)
@@ -82,4 +82,9 @@ from timetable T inner join guest G on T.guest_id = G.guest_id;
 create trigger l1 on Ученики
 for update as BEGIN
   print 'Таблица изменена'
-End
+End;
+
+INSERT INTO guest
+  (fullName,birth,hostel,course,classGroup,trainer_id)
+values
+  ('фцвфцв','2023-01-11','фцвф',1,'фцвф',12);

@@ -1,11 +1,16 @@
 import java.sql.*; // программа для ведения учета
 import javax.swing.*;
 
+import org.jdatepicker.JDatePicker;
+import org.jdatepicker.impl.DateComponentFormatter;
+import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import java.awt.*;
-//import java.awt.Event.*;
+import java.util.Properties;
 import java.util.logging.*;
+import java.util.Date;
 
 public class MainApp {
 
@@ -44,8 +49,36 @@ public class MainApp {
      */
     static JTable tableInMainFrame = null;
 
+
+    /**
+     * Фрейм для вывода ошибок
+     */
+    static JFrame msgFrame = null;
+
+    /**
+     * Объект для вывода текста ошибки внутри {@link #msgFrame}
+     */
+    static JLabel errorLabel = new JLabel("");
+
+    /**
+     * Объект для закрытия фрейма с ошибкой ({@link #msgFrame})
+     */
+    static JButton closeErrorMsg = new JButton("Ok");
+
     public static void main(String[] args) {
         mainFrame = new JFrame("mainFrame");
+        msgFrame = new JFrame("Error");
+        errorLabel.setFont(new Font("Fira Code", Font.PLAIN, 16));
+        msgFrame.add(errorLabel, BorderLayout.NORTH);
+        msgFrame.add(closeErrorMsg, BorderLayout.SOUTH);
+        msgFrame.setVisible(false);
+        msgFrame.setSize(400, 120);
+        msgFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        closeErrorMsg.addActionListener(b->{
+            msgFrame.setVisible(false);
+            errorLabel.setText("");
+        });
+        msgFrame.setVisible(false);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainScrollPane = new JScrollPane();
         mainFrame.add(setMenu(), BorderLayout.NORTH);
@@ -352,12 +385,13 @@ public class MainApp {
             tempFrame = new JFrame("Добавление данных");
             tempFrame.setVisible(true);
             tempFrame.setSize(800, 100);
+            tempFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
             // Контейнер для всех элементов в фрейме
             Box mainBoxForTempFrame = new Box(BoxLayout.X_AXIS);
 
             // Лейблы названий столбцов
             JLabel fullnameLabel = new JLabel("ФИО");
-            JLabel birthLabel = new JLabel("День ождения");
+            JLabel birthLabel = new JLabel("День рождения");
             JLabel hostelLabel = new JLabel("Общежитие");
             JLabel courseLabel = new JLabel("Курс");
             JLabel classgroupLabel = new JLabel("Группа");
@@ -365,7 +399,7 @@ public class MainApp {
 
             // Поля для заполнения данных
             JTextField fullnameTextField = new JTextField();
-            JTextField birthTextField = new JTextField();
+            JDatePicker birthTextField = createDateField();
             JTextField hostelTextField = new JTextField();
             JTextField courseTextField = new JTextField();
             JTextField classgroupTextField = new JTextField();
@@ -387,13 +421,16 @@ public class MainApp {
             classgroupBox.add(createBoxWithGlue(classgroupLabel));
             trainerBox.add(createBoxWithGlue(trainerLabel));
 
+            // Затем добавляем поля для ввода данных
             fullnameBox.add(fullnameTextField);
-            birthBox.add(birthTextField);
+            // Поле для даты сделано отдельной библиотекой JDatePicker
+            birthBox.add((Component)(birthTextField));
             hostelBox.add(hostelTextField);
             courseBox.add(courseTextField);
             classgroupBox.add(classgroupTextField);
             trainerBox.add(trainerTextField);
 
+            // Добавляем контейнеры с нашими элементами в общий контейнер
             mainBoxForTempFrame.add(fullnameBox);
             mainBoxForTempFrame.add(birthBox);
             mainBoxForTempFrame.add(hostelBox);
@@ -401,13 +438,65 @@ public class MainApp {
             mainBoxForTempFrame.add(classgroupBox);
             mainBoxForTempFrame.add(trainerBox);
 
+            // Добавляем общий контейнер в фрейм
             tempFrame.add(mainBoxForTempFrame);
+            
+            // Добавляем кнопку отправки данных в бд в фрейм
             JButton sendButton = new JButton("Отправить");
-            // TODO datepicker
             tempFrame.add(sendButton, BorderLayout.SOUTH);
 
             sendButton.addActionListener(a->{
-                
+                String year = Integer.toString(birthTextField.getModel().getYear());
+                String month = birthTextField.getModel().getMonth() + 1 < 10 ? "0" + Integer.toString(birthTextField.getModel().getMonth() + 1) : Integer.toString(birthTextField.getModel().getMonth() + 1);
+                String day = birthTextField.getModel().getDay() < 10 ? "0" + Integer.toString(birthTextField.getModel().getDay()) : Integer.toString(birthTextField.getModel().getDay());
+                String value = year + "-" + month + "-" + day;
+                Date d = new Date();
+                String todayYear = Integer.toString(d.getYear() + 1900);
+                String todayMonths = d.getMonth() + 1 < 10 ? "0" + Integer.toString(d.getMonth() + 1) : Integer.toString(d.getMonth() + 1);
+                String todayDays = d.getDate() < 10 ? "0" + Integer.toString(d.getDate()) : Integer.toString(d.getDate());
+                String today = todayYear + "-" + todayMonths + "-" + todayDays;
+
+                birthTextField.getModel().setDate(d.getYear() + 1900, d.getMonth() + 1, d.getDay());
+
+                Boolean flag = false;
+                if (fullnameTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Fullname field is empty!<br>Please type fullname to field!</html>");
+                    // System.out.println("fullname");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+                else if (hostelTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Hostel field is empty!<br>Please type hostel name to field!</html>");
+                    // System.out.println("hostel");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+                else if (courseTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Course field is empty!<br>Please type course to field!</html>");
+                    // System.out.println("course");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+                else if (classgroupTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Class group is empty!<br>Please type class group to field!</html>");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+                else if (trainerTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Trainer_id is empty!<br>Please type Trainer_id to field!</html>");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+
+                if (!flag) {
+                    String tmpStr = "insert into guest (fullName,birth,hostel,course,classGroup,trainer_id) values (\"" + fullnameTextField.getText() + "\",\"" + value + "\",\"" + hostelTextField.getText() + "\"," + courseTextField.getText() + ",\"" + classgroupTextField.getText() + "\"," + trainerTextField.getText() + ")";
+                    System.out.println(tmpStr);
+                    fromDB(tmpStr);
+                    System.out.println("Insert data to DB!");
+                    // tempFrame.setVisible(false);
+                }
+                // System.out.println(value);
+                // System.out.println(today);
             });
         });
         // TODO добавить остальные кнопки в меню
@@ -451,6 +540,15 @@ public class MainApp {
      */
     public static JDatePickerImpl createDateField() {
         JDatePickerImpl myElem = null;
+        UtilDateModel uiModel = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "\u0421\u0435\u0433\u043e\u0434\u043d\u044f");
+        p.put("text.month", "\u041c\u0435\u0441\u044f\u0446");
+        p.put("text.year", "\u0413\u043e\u0434");
+        JDatePanelImpl dtpPanel = new JDatePanelImpl(uiModel, p);
+        DateComponentFormatter dlf = new DateComponentFormatter();
+        myElem = new JDatePickerImpl(dtpPanel, dlf);
+        myElem.setTextEditable(true);
 
         return myElem;
     }
