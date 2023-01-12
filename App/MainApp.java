@@ -10,7 +10,6 @@ import org.jdatepicker.impl.UtilDateModel;
 import java.awt.*;
 import java.util.Properties;
 import java.util.logging.*;
-import java.util.Date;
 
 public class MainApp {
 
@@ -450,13 +449,6 @@ public class MainApp {
                 String month = birthTextField.getModel().getMonth() + 1 < 10 ? "0" + Integer.toString(birthTextField.getModel().getMonth() + 1) : Integer.toString(birthTextField.getModel().getMonth() + 1);
                 String day = birthTextField.getModel().getDay() < 10 ? "0" + Integer.toString(birthTextField.getModel().getDay()) : Integer.toString(birthTextField.getModel().getDay());
                 String value = year + "-" + month + "-" + day;
-                Date d = new Date();
-                String todayYear = Integer.toString(d.getYear() + 1900);
-                String todayMonths = d.getMonth() + 1 < 10 ? "0" + Integer.toString(d.getMonth() + 1) : Integer.toString(d.getMonth() + 1);
-                String todayDays = d.getDate() < 10 ? "0" + Integer.toString(d.getDate()) : Integer.toString(d.getDate());
-                String today = todayYear + "-" + todayMonths + "-" + todayDays;
-
-                birthTextField.getModel().setDate(d.getYear() + 1900, d.getMonth() + 1, d.getDay());
 
                 Boolean flag = false;
                 if (fullnameTextField.getText().isBlank()) {
@@ -499,8 +491,306 @@ public class MainApp {
                 // System.out.println(today);
             });
         });
-        // TODO добавить остальные кнопки в меню
+
+        trainerMenuItem_toAdd.addActionListener(e->{
+            tempFrame = new JFrame("Добавление данных");
+            tempFrame.setVisible(true);
+            tempFrame.setSize(800, 100);
+            tempFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            // Контейнер для всех элементов в фрейме
+            Box mainBoxForTempFrame = new Box(BoxLayout.X_AXIS);
+
+            // Лейблы названий столбцов
+            JLabel fullnameLabel = new JLabel("ФИО");
+            JLabel birthLabel = new JLabel("День рождения");
+            JLabel adressLabel = new JLabel("Адрес");
+            JLabel phoneLabel = new JLabel("Номер телефона");
+
+            // Поля для заполнения данных
+            JTextField fullnameTextField = new JTextField();
+            JDatePicker birthTextField = createDateField();
+            JTextField adressTextField = new JTextField();
+            JTextField phoneTextField = new JTextField();
+            
+            // Контейнеры для разметки элементов
+            Box fullnameBox = new Box(BoxLayout.Y_AXIS);
+            Box birthBox = new Box(BoxLayout.Y_AXIS);
+            Box adressBox = new Box(BoxLayout.Y_AXIS);
+            Box phoneBox = new Box(BoxLayout.Y_AXIS);
+
+            // Первыми добавляем названия столбцов
+            fullnameBox.add(createBoxWithGlue(fullnameLabel));
+            birthBox.add(createBoxWithGlue(birthLabel));
+            adressBox.add(createBoxWithGlue(adressLabel));
+            phoneBox.add(createBoxWithGlue(phoneLabel));
+
+            // Затем добавляем поля для ввода данных
+            fullnameBox.add(fullnameTextField);
+            // Поле для даты сделано отдельной библиотекой JDatePicker
+            birthBox.add((Component)(birthTextField));
+            adressBox.add(adressTextField);
+            phoneBox.add(phoneTextField);
+
+            // Добавляем контейнеры с нашими элементами в общий контейнер
+            mainBoxForTempFrame.add(fullnameBox);
+            mainBoxForTempFrame.add(birthBox);
+            mainBoxForTempFrame.add(adressBox);
+            mainBoxForTempFrame.add(phoneBox);
+
+            // Добавляем общий контейнер в фрейм
+            tempFrame.add(mainBoxForTempFrame);
+            
+            // Добавляем кнопку отправки данных в бд в фрейм
+            JButton sendButton = new JButton("Отправить");
+            tempFrame.add(sendButton, BorderLayout.SOUTH);
+
+            sendButton.addActionListener(a->{
+                String year = Integer.toString(birthTextField.getModel().getYear());
+                String month = birthTextField.getModel().getMonth() + 1 < 10 ? "0" + Integer.toString(birthTextField.getModel().getMonth() + 1) : Integer.toString(birthTextField.getModel().getMonth() + 1);
+                String day = birthTextField.getModel().getDay() < 10 ? "0" + Integer.toString(birthTextField.getModel().getDay()) : Integer.toString(birthTextField.getModel().getDay());
+                String value = year + "-" + month + "-" + day;
+
+                Boolean flag = false;
+                if (fullnameTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Fullname field is empty!<br>Please type fullname to field!</html>");
+                    // System.out.println("fullname");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+                else if (adressTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Adress field is empty!<br>Please type hostel name to field!</html>");
+                    // System.out.println("hostel");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+                else if (phoneTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Phone number field is empty!<br>Please type course to field!</html>");
+                    // System.out.println("course");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+
+                if (!flag) {
+                    String tmpStr = "insert into trainer (fullName,birth,adress,phoneNumber) values (\"" + fullnameTextField.getText() + "\",\"" + value + "\",\"" + adressTextField.getText() + "\",\"" + phoneTextField.getText() + "\")";
+                    System.out.println(tmpStr);
+                    updateDB(tmpStr);
+                    System.out.println("Insert data to DB!");
+                    tempFrame.setVisible(false);
+                }
+            });
+        });
+
+        exerciseMenuItem_toAdd.addActionListener(e->{
+            tempFrame = new JFrame("Добавление данных");
+            tempFrame.setVisible(true);
+            tempFrame.setSize(800, 100);
+            tempFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            // Контейнер для всех элементов в фрейме
+            Box mainBoxForTempFrame = new Box(BoxLayout.X_AXIS);
+
+            // Лейблы названий столбцов
+            JLabel exerciseLabel = new JLabel("Упражнения");
+            JLabel approachesLabel = new JLabel("Число повторений");
+
+            // Поля для заполнения данных
+            JTextField exerciseTextField = new JTextField();
+            JTextField approachesTextField = new JTextField();
+            
+            // Контейнеры для разметки элементов
+            Box exerciseBox = new Box(BoxLayout.Y_AXIS);
+            Box approachesBox = new Box(BoxLayout.Y_AXIS);
+
+            // Первыми добавляем названия столбцов
+            exerciseBox.add(createBoxWithGlue(exerciseLabel));
+            approachesBox.add(createBoxWithGlue(approachesLabel));
+
+            // Затем добавляем поля для ввода данных
+            exerciseBox.add(exerciseTextField);
+            approachesBox.add(approachesTextField);
+
+            // Добавляем контейнеры с нашими элементами в общий контейнер
+            mainBoxForTempFrame.add(exerciseBox);
+            mainBoxForTempFrame.add(approachesBox);
+
+            // Добавляем общий контейнер в фрейм
+            tempFrame.add(mainBoxForTempFrame);
+            
+            // Добавляем кнопку отправки данных в бд в фрейм
+            JButton sendButton = new JButton("Отправить");
+            tempFrame.add(sendButton, BorderLayout.SOUTH);
+
+            sendButton.addActionListener(a->{
+
+                Boolean flag = false;
+                if (exerciseTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Exercise field is empty!<br>Please type fullname to field!</html>");
+                    // System.out.println("fullname");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+                else if (approachesTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Approaches field is empty!<br>Please type hostel name to field!</html>");
+                    // System.out.println("hostel");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+
+                if (!flag) {
+                    String tmpStr = "insert into exercises (exercise,approaches) values (\""+ exerciseTextField.getText() + "\"," + approachesTextField.getText() +")";
+                    System.out.println(tmpStr);
+                    updateDB(tmpStr);
+                    System.out.println("Insert data to DB!");
+                    tempFrame.setVisible(false);
+                }
+            });
+        });
+
+        musclesGroupMenuItem_toAdd.addActionListener(e->{
+            tempFrame = new JFrame("Добавление данных");
+            tempFrame.setVisible(true);
+            tempFrame.setSize(800, 100);
+            tempFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            // Контейнер для всех элементов в фрейме
+            Box mainBoxForTempFrame = new Box(BoxLayout.X_AXIS);
+
+            // Лейблы названий столбцов
+            JLabel musclesGroupLabel = new JLabel("Группа мышц");
+            JLabel exerciseLabel = new JLabel("Номер упражнения");
+
+            // Поля для заполнения данных
+            JTextField musclesGroupTextField = new JTextField();
+            JTextField exerciseTextField = new JTextField();
+            
+            // Контейнеры для разметки элементов
+            Box musclesGroupBox = new Box(BoxLayout.Y_AXIS);
+            Box exerciseBox = new Box(BoxLayout.Y_AXIS);
+
+            // Первыми добавляем названия столбцов
+            musclesGroupBox.add(createBoxWithGlue(musclesGroupLabel));
+            exerciseBox.add(createBoxWithGlue(exerciseLabel));
+
+            // Затем добавляем поля для ввода данных
+            musclesGroupBox.add(musclesGroupTextField);
+            exerciseBox.add(exerciseTextField);
+
+            // Добавляем контейнеры с нашими элементами в общий контейнер
+            mainBoxForTempFrame.add(musclesGroupBox);
+            mainBoxForTempFrame.add(exerciseBox);
+
+            // Добавляем общий контейнер в фрейм
+            tempFrame.add(mainBoxForTempFrame);
+            
+            // Добавляем кнопку отправки данных в бд в фрейм
+            JButton sendButton = new JButton("Отправить");
+            tempFrame.add(sendButton, BorderLayout.SOUTH);
+
+            sendButton.addActionListener(a->{
+
+                Boolean flag = false;
+                if (musclesGroupTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Muscles group field is empty!<br>Please type fullname to field!</html>");
+                    // System.out.println("fullname");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+                else if (exerciseTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Exercise_id field is empty!<br>Please type hostel name to field!</html>");
+                    // System.out.println("hostel");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+
+                if (!flag) {
+                    String tmpStr = "insert into musclesGroup (musclesGroup,exercise_id) values (\""+ musclesGroupTextField.getText() + "\"," + exerciseTextField.getText() +")";
+                    System.out.println(tmpStr);
+                    updateDB(tmpStr);
+                    System.out.println("Insert data to DB!");
+                    tempFrame.setVisible(false);
+                }
+            });
+        });
+
+        timetableMenuItem_toAdd.addActionListener(e->{
+            tempFrame = new JFrame("Добавление данных");
+            tempFrame.setVisible(true);
+            tempFrame.setSize(800, 100);
+            tempFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            // Контейнер для всех элементов в фрейме
+            Box mainBoxForTempFrame = new Box(BoxLayout.X_AXIS);
+
+            // Лейблы названий столбцов
+            JLabel dateTimeLabel = new JLabel("Дата");
+            JLabel daOfWeekLabel = new JLabel("День недели");
+            JLabel guestLabel = new JLabel("Номер гостя");
+
+            // Поля для заполнения данных
+            JDatePicker dateTimeTextField = createDateField();
+            JTextField dayOfWeekTextField = new JTextField();
+            JTextField guestTextField = new JTextField();
+            
+            // Контейнеры для разметки элементов
+            Box dateTimeBox = new Box(BoxLayout.Y_AXIS);
+            Box dayOfWeekBox = new Box(BoxLayout.Y_AXIS);
+            Box guestBox = new Box(BoxLayout.Y_AXIS);
+
+            // Первыми добавляем названия столбцов
+            dateTimeBox.add(createBoxWithGlue(daOfWeekLabel));
+            dayOfWeekBox.add(createBoxWithGlue(dateTimeLabel));
+            guestBox.add(createBoxWithGlue(guestLabel));
+
+            // Затем добавляем поля для ввода данных
+            // Поле для даты сделано отдельной библиотекой JDatePicker
+            dateTimeBox.add((Component)(dateTimeTextField));
+            dayOfWeekBox.add(dayOfWeekTextField);
+            guestBox.add(guestTextField);
+
+            // Добавляем контейнеры с нашими элементами в общий контейнер
+            mainBoxForTempFrame.add(dateTimeBox);
+            mainBoxForTempFrame.add(dayOfWeekBox);
+            mainBoxForTempFrame.add(guestBox);
+
+            // Добавляем общий контейнер в фрейм
+            tempFrame.add(mainBoxForTempFrame);
+            
+            // Добавляем кнопку отправки данных в бд в фрейм
+            JButton sendButton = new JButton("Отправить");
+            tempFrame.add(sendButton, BorderLayout.SOUTH);
+
+            sendButton.addActionListener(a->{
+                String year = Integer.toString(dateTimeTextField.getModel().getYear());
+                String month = dateTimeTextField.getModel().getMonth() + 1 < 10 ? "0" + Integer.toString(dateTimeTextField.getModel().getMonth() + 1) : Integer.toString(dateTimeTextField.getModel().getMonth() + 1);
+                String day = dateTimeTextField.getModel().getDay() < 10 ? "0" + Integer.toString(dateTimeTextField.getModel().getDay()) : Integer.toString(dateTimeTextField.getModel().getDay());
+                String value = year + "-" + month + "-" + day;
+
+                Boolean flag = false;
+                if (dayOfWeekTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Day of week field is empty!<br>Please type fullname to field!</html>");
+                    // System.out.println("fullname");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+                else if (guestTextField.getText().isBlank()) {
+                    errorLabel.setText("<html>Guest_id field is empty!<br>Please type hostel name to field!</html>");
+                    // System.out.println("hostel");
+                    msgFrame.setVisible(true);
+                    flag = true;
+                }
+
+                if (!flag) {
+                    String tmpStr = "insert into timetable (datetime,dayOfWeek,guest_id) values (\"" + value + "\",\"" + dayOfWeekTextField.getText() + "\"," + guestTextField.getText() + ")";
+                    System.out.println(tmpStr);
+                    updateDB(tmpStr);
+                    System.out.println("Insert data to DB!");
+                    tempFrame.setVisible(false);
+                }
+            });
+        });
+
         addMenu.add(guestMenuItem_toAdd);
+        addMenu.add(trainerMenuItem_toAdd);
+        addMenu.add(exerciseMenuItem_toAdd);
+        addMenu.add(musclesGroupMenuItem_toAdd);
+        addMenu.add(timetableMenuItem_toAdd);
         tablesMenu.add(addMenu);
 
         // -------------------------------------------------------------------
