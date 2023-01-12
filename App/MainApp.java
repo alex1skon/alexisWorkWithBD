@@ -491,9 +491,9 @@ public class MainApp {
                 if (!flag) {
                     String tmpStr = "insert into guest (fullName,birth,hostel,course,classGroup,trainer_id) values (\"" + fullnameTextField.getText() + "\",\"" + value + "\",\"" + hostelTextField.getText() + "\"," + courseTextField.getText() + ",\"" + classgroupTextField.getText() + "\"," + trainerTextField.getText() + ")";
                     System.out.println(tmpStr);
-                    fromDB(tmpStr);
+                    updateDB(tmpStr);
                     System.out.println("Insert data to DB!");
-                    // tempFrame.setVisible(false);
+                    tempFrame.setVisible(false);
                 }
                 // System.out.println(value);
                 // System.out.println(today);
@@ -578,6 +578,27 @@ public class MainApp {
             System.out.println("Проблема с подключением!");
         }
         return localRS;
+    }
+
+    private static int updateDB(String sqlString) {
+        conn = null;
+        stmt = null;
+        int toReturn = 0;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            try {
+                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/Course", "forCourse", "1234");
+                stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+                toReturn = stmt.executeUpdate(sqlString);
+            } catch (SQLException ex) {
+                Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Проблема с запросом в БД!");
+            }
+        } catch (ClassNotFoundException e) {
+            Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, e);
+            System.out.println("Проблема с подключением!");
+        }
+        return toReturn;
     }
 
 }
