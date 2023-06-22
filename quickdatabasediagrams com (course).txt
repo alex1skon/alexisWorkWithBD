@@ -1,0 +1,53 @@
+exercises
+--
+exercise_id int PK IDENTITY
+exercise varchar(50) NULL
+approaches int NULL
+
+guest
+--
+guest_id int PK IDENTITY
+fullName varchar(50) NULL
+birth date NULL
+hostel varchar(50) NULL
+course int NULL
+classGroup varchar(10) NULL
+trainer_id int INDEX NULL FK >- trainer.trainer_id
+
+musclesgroup
+--
+musclesGroup_id int PK IDENTITY
+musclesGroup varchar(50) NULL
+exercise_id int INDEX NULL FK >- exercises.exercise_id
+
+timetable
+--
+timetable_id int PK IDENTITY
+Datetime datetime NULL
+dayOfWeek enum('Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье') NULL
+guest_id int INDEX NULL FK >- guest.guest_id
+
+trainer
+--
+trainer_id int PK IDENTITY
+fullname varchar(50) NULL
+birth date NULL
+adress varchar(100) NULL
+phoneNumber varchar(13) NULL
+
+trainingprogram
+--
+trainingProgram_id int PK IDENTITY
+trainingProgramName varchar(100) NULL
+started datetime NULL
+ended datetime NULL
+guest_id int INDEX NULL FK >- guest.guest_id
+trainer_id int INDEX NULL FK >- trainer.trainer_id
+musclesGroup_id int INDEX NULL FK >- musclesgroup.musclesGroup_id
+
+visitingSchedule
+--
+visitingSchedule_id int PK IDENTITY
+date date NULL
+dayOfWeek enum('Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье') NULL
+guest_id int INDEX NULL FK >- guest.guest_id

@@ -48,7 +48,6 @@ public class MainApp {
      */
     static JTable tableInMainFrame = null;
 
-
     /**
      * Фрейм для вывода ошибок
      */
@@ -91,7 +90,7 @@ public class MainApp {
      * Приводит результат запроса в БД к табличному виду
      * (Привод к табличному виду запроса на таблицу "Гости")
      * 
-     * @param rs - рузельатт запроса в БД
+     * @param rs - результат запроса в БД
      * @return Возвращает таблицу с вписанными в нее данными из запроса
      */
     protected static JTable guestToTableView(ResultSet rs) {
@@ -139,7 +138,7 @@ public class MainApp {
      * Приводит результат запроса в БД к табличному виду
      * (Привод к табличному виду запроса на таблицу "Тренеры")
      * 
-     * @param rs - рузельатт запроса в БД
+     * @param rs - рузультат запроса в БД
      * @return Возвращает таблицу с вписанными в нее данными из запроса
      */
     protected static JTable trainerToTableView(ResultSet rs) {
@@ -175,7 +174,7 @@ public class MainApp {
      * Приводит результат запроса в БД к табличному виду
      * (Привод к табличному виду запроса на таблицу "Упражнения")
      * 
-     * @param rs - рузельатт запроса в БД
+     * @param rs - результат запроса в БД
      * @return Возвращает таблицу с вписанными в нее данными из запроса
      */
     protected static JTable exerciseToTableView(ResultSet rs) {
