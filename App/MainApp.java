@@ -1,3 +1,4 @@
+/// Версия для диплома
 import java.sql.*; // программа для ведения учета
 import javax.swing.*;
 
