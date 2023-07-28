@@ -359,4 +359,8 @@ public class MainForm {
         }
         return localRS; // возвращаем результат
     }
+
+    public static class User {
+
+    }
 }
